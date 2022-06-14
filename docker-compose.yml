@@ -1,0 +1,52 @@
+version: "4.9"
+
+networks:
+  default:
+
+services:
+  mysql:
+    image: mysql
+    restart: always
+    cpus: 0.5
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=12345
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_RANDOM_ROOT_PASSWORD=12345
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+      
+    restart: always
+    volumes:
+      - ./django:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.aiio-app
+    command: ["npm", "start"]
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./aiio-app:/aiio-app
+      - node-modules:/aiio-app/
+    restart: always
+
+volumes:
+    node-modules:
+      
+
+   

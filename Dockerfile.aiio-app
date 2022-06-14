@@ -1,0 +1,13 @@
+FROM node:lts-alpine3.14
+
+# set the working direction
+WORKDIR /aiio-app
+
+COPY ./aiio-app ./
+
+RUN npm install -g yarn --force
+RUN yarn install --force
+
+RUN chmod 777 /aiio-app/node_modules
+# start app
+CMD ["yarn", "start"]
